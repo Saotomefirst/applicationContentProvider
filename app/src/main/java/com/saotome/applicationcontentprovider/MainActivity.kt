@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saotome.applicationcontentprovider.database.NotasDatabaseHelper.Companion.TITULO_NOTAS
@@ -22,6 +23,8 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> 
     private lateinit var notasRecyclerview : RecyclerView
     private lateinit var notasAdd : FloatingActionButton
 
+    private lateinit var adapter: NotasAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityMainbinding = ActivityMainBinding.inflate(layoutInflater)
@@ -31,7 +34,13 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> 
         notasAdd = activityMainbinding.notasAdd
         notasAdd.setOnClickListener {}
 
+        adapter = NotasAdapter()
+        // para que não tenham IDs repetidos dentro do Adapter
+        adapter.setHasStableIds(true)
+
         notasRecyclerview = activityMainbinding.notasRecycler
+        notasRecyclerview.layoutManager = LinearLayoutManager (this)
+        notasRecyclerview.adapter = adapter
 
     }
 
