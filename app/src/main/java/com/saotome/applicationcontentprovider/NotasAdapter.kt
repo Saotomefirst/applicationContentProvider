@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.saotome.applicationcontentprovider.database.NotasDatabaseHelper.Companion.DESCRICAO_NOTAS
+import com.saotome.applicationcontentprovider.database.NotasDatabaseHelper.Companion.TITULO_NOTAS
 
-class NotasAdapter(): RecyclerView.Adapter<NotasViewHolder>() {
+class NotasAdapter(private val listener: NotaClickedListener): RecyclerView.Adapter<NotasViewHolder>() {
 
     // quem vai armazenar os dados que virão do LoaderManager - método onLoadFinisher
     private var mCursor: Cursor? = null
@@ -17,11 +19,29 @@ class NotasAdapter(): RecyclerView.Adapter<NotasViewHolder>() {
         NotasViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.nota_item, parent, false))
 
     override fun onBindViewHolder(holder: NotasViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        mCursor?.moveToPosition(position)
+
+        holder.notaTitulo.text = mCursor?.getString(mCursor?.getColumnIndex(TITULO_NOTAS) as Int)
+        holder.notaDescricao.text = mCursor?.getString(mCursor?.getColumnIndex(DESCRICAO_NOTAS) as Int)
+
+        holder.notaBotaoExclusao.setOnClickListener {
+            mCursor?.moveToPosition(position)
+            listener.notaRemoveItem(mCursor)
+            notifyDataSetChanged()
+        }
+
+        holder.itemView.setOnClickListener {
+            listener.notaClickedItem(mCursor as Cursor)
+        }
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        if (mCursor != null) {
+            return mCursor?.count as Int
+        }
+        else {
+            return 0
+        }
     }
 
     fun setCursor (novoCursor: Cursor?) {
