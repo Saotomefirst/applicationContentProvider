@@ -1,8 +1,10 @@
 package com.saotome.applicationcontentprovider
 
 import android.database.Cursor
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.BaseColumns._ID
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
@@ -34,7 +36,18 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> 
         notasAdd = activityMainbinding.notasAdd
         notasAdd.setOnClickListener {}
 
-        adapter = NotasAdapter()
+        adapter = NotasAdapter(object : NotaClickedListener {
+            override fun notaClickedItem(cursor: Cursor) {
+                val id: Long = cursor.getLong(cursor.getColumnIndex(_ID))
+            }
+
+            override fun notaRemoveItem(cursor: Cursor?) {
+                val id: Long? = cursor?.getLong(cursor.getColumnIndex(_ID))
+                //objeto responsável pela comunicação com os ContentProvider - incluindo nosso NotasProvider
+                contentResolver.delete(Uri.withAppendedPath(URI_NOTAS), id.toString(), null, null)
+            }
+
+        })
         // para que não tenham IDs repetidos dentro do Adapter
         adapter.setHasStableIds(true)
 
