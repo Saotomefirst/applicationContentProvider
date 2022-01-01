@@ -9,7 +9,7 @@ class NotasDatabaseHelper(
     context:Context
 ): SQLiteOpenHelper(context, "databaseNotas", null, 1) {
     override fun onCreate(db: SQLiteDatabase?) {
-        db?.execSQL("CREATETABELA_$TABELA_NOTAS (" +
+        db?.execSQL("CREATE TABLE $TABELA_NOTAS (" +
                 "$_ID INTEGER NOT NULL PRIMARY KEY," +
                 "$TITULO_NOTAS TEXT NOT NULL," +
                 "$DESCRICAO_NOTAS TEXT NOT NULL" +
@@ -18,6 +18,12 @@ class NotasDatabaseHelper(
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         // não vamos usar, mas já sabemos para que ele serve!
+        db?.execSQL("DROP TABLE $TABELA_NOTAS")
+        db?.execSQL("CREATE TABLE $TABELA_NOTAS (" +
+                "$_ID INTEGER NOT NULL PRIMARY KEY," +
+                "$TITULO_NOTAS TEXT NOT NULL," +
+                "$DESCRICAO_NOTAS TEXT NOT NULL" +
+                ")")
     }
 
     companion object {

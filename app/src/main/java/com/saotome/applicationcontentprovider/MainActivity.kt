@@ -1,5 +1,6 @@
 package com.saotome.applicationcontentprovider
 
+import android.annotation.SuppressLint
 import android.database.Cursor
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saotome.applicationcontentprovider.database.NotasDatabaseHelper.Companion.TITULO_NOTAS
 import com.saotome.applicationcontentprovider.database.NotasProvider.Companion.URI_NOTAS
+import com.saotome.applicationcontentprovider.database.NotasProvider.Companion.BASE_URI
 import com.saotome.applicationcontentprovider.databinding.ActivityMainBinding
 
 /*
@@ -34,17 +36,24 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> 
         setContentView(activityMainView)
 
         notasAdd = activityMainbinding.notasAdd
-        notasAdd.setOnClickListener {}
+        notasAdd.setOnClickListener {
+            NotasDetailFragment().show(supportFragmentManager, "dialogo")
+        }
 
         adapter = NotasAdapter(object : NotaClickedListener {
+            @SuppressLint("Range")
             override fun notaClickedItem(cursor: Cursor) {
                 val id: Long = cursor.getLong(cursor.getColumnIndex(_ID))
+                val fragment = NotasDetailFragment.novaInstancia(id)
+                fragment.show(supportFragmentManager, "dialogo")
             }
 
+            @SuppressLint("Range")
             override fun notaRemoveItem(cursor: Cursor?) {
                 val id: Long? = cursor?.getLong(cursor.getColumnIndex(_ID))
                 //objeto responsável pela comunicação com os ContentProvider - incluindo nosso NotasProvider
-                contentResolver.delete(Uri.withAppendedPath(URI_NOTAS), id.toString(), null, null)
+                val uri = Uri.withAppendedPath(URI_NOTAS, id.toString())
+                contentResolver.delete(uri, id.toString(), null)
             }
 
         })
@@ -55,6 +64,9 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> 
         notasRecyclerview.layoutManager = LinearLayoutManager (this)
         notasRecyclerview.adapter = adapter
 
+        // Iniciando a thread no background
+        LoaderManager.getInstance(this).initLoader(0, null, this)
+
     }
 
     // Instancia o que será buscado
@@ -64,12 +76,12 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> 
     // Pega os dados recebidos e permite sua manipulação
     override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
         if (data != null) {
-
+            adapter.setCursor(data)
         }
     }
 
     // Mata a pesquisa em segundo plano
     override fun onLoaderReset(loader: Loader<Cursor>) {
-        TODO("Not yet implemented")
+        adapter.setCursor(null)
     }
 }
