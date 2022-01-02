@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.BaseColumns._ID
+import android.util.Log
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> 
             @SuppressLint("Range")
             override fun notaClickedItem(cursor: Cursor) {
                 val id: Long = cursor.getLong(cursor.getColumnIndex(_ID))
+                Log.d("Mayara", id.toString())
                 val fragment = NotasDetailFragment.novaInstancia(id)
                 fragment.show(supportFragmentManager, "dialogo")
             }

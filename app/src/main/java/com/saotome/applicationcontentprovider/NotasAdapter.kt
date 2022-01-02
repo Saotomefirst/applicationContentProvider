@@ -31,6 +31,7 @@ class NotasAdapter(private val listener: NotaClickedListener): RecyclerView.Adap
         }
 
         holder.itemView.setOnClickListener {
+            mCursor?.moveToPosition(position)
             listener.notaClickedItem(mCursor as Cursor)
         }
     }

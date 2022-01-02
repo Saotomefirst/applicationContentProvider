@@ -37,7 +37,7 @@ class NotasProvider : ContentProvider() {
         if (mUriMatcher.match(uri) == NOTAS_POR_ID) {
             val db: SQLiteDatabase = dbHelper.writableDatabase
             val linhasAfetadas: Int = db.delete(TABELA_NOTAS, "$_ID = ?", arrayOf(uri.lastPathSegment))
-//            db.close()
+            db.close()
             context?.contentResolver?.notifyChange(uri, null)
             return linhasAfetadas
         }
@@ -58,7 +58,7 @@ class NotasProvider : ContentProvider() {
             val db: SQLiteDatabase = dbHelper.writableDatabase
             val id = db.insert(TABELA_NOTAS, null, values)
             val insertURI: Uri = Uri.withAppendedPath(BASE_URI, id.toString())
-//            db.close()
+            db.close()
             context?.contentResolver?.notifyChange(uri, null)
             return insertURI
         }else {
@@ -100,7 +100,7 @@ class NotasProvider : ContentProvider() {
         if (mUriMatcher.match(uri) == NOTAS_POR_ID) {
             val db: SQLiteDatabase = dbHelper.writableDatabase
             val linhasAfetadas: Int = db.update(TABELA_NOTAS, values, "$_ID = ?", arrayOf(uri.lastPathSegment))
-//            db.close()
+            db.close()
             context?.contentResolver?.notifyChange(uri, null)
             return linhasAfetadas
         }
